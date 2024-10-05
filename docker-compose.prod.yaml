@@ -1,0 +1,64 @@
+version: '3.7'
+# name: phone-spam
+services:
+  api-service:
+    image: us-central1-docker.pkg.dev/your-gcp-project-id/phone-spam-api-repo/phone-spam-api-service-prod:latest
+    healthcheck:
+      test: curl -f http://localhost:3000/api/v1/healthcheck || exit 1
+      interval: 10s
+      timeout: 30s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: ${APISERVICE_RESOURCES_LIMITS_CPUS:-2}
+          memory: ${APISERVICE_RESOURCES_LIMITS_MEMORY:-4G}
+        reservations:
+          cpus: ${APISERVICE_RESOURCES_RESERVATIONS_CPUS:-1}
+          memory: ${APISERVICE_RESOURCES_RESERVATIONS_MEMORY:-2G}
+    environment:
+      PORT: 3000
+      DB_HOST: postgres-db
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: phone_spam
+      JWT_SECRET: ${JWT_SECRET}
+      ENVIRONMENT: production
+    restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - phone-spam-network
+    command: /bin/sh -c "sequelize db:migrate && sequelize db:seed:all && npm run start"
+
+  postgres-db:
+    container_name: phone-spam-postgres-db
+    image: postgres:15.2-alpine3.17
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: phone_spam
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data:rw
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    networks:
+      - phone-spam-network
+
+networks:
+  phone-spam-network:
+    name: phone-spam-network
+    driver: bridge
