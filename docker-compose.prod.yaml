@@ -2,7 +2,7 @@ version: '3.7'
 # name: phone-spam
 services:
   api-service:
-    image: us-central1-docker.pkg.dev/your-gcp-project-id/phone-spam-api-repo/phone-spam-api-service-prod:latest
+    image: us-central1-docker.pkg.dev/gotham-433513/phone-spam-api-repo/phone-spam-api-service-prod:05102024-42f19cf41f
     healthcheck:
       test: curl -f http://localhost:3000/api/v1/healthcheck || exit 1
       interval: 10s
@@ -31,13 +31,12 @@ services:
       ENVIRONMENT: production
     restart: always
     ports:
-      - 3000:3000
+      - 3001:3000
     networks:
       - phone-spam-network
-    command: /bin/sh -c "sequelize db:migrate && sequelize db:seed:all && npm run start"
+    command: /bin/sh -c "npm run start"
 
   postgres-db:
-    container_name: phone-spam-postgres-db
     image: postgres:15.2-alpine3.17
     environment:
       POSTGRES_USER: ${DB_USER}
