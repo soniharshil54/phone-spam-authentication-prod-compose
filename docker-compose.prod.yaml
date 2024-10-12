@@ -2,7 +2,7 @@ version: '3.7'
 # name: phone-spam
 services:
   api-service:
-    image: us-central1-docker.pkg.dev/gotham-433513/phone-spam-api-repo/phone-spam-api-service-prod:12102024-549d872f7a
+    image: us-central1-docker.pkg.dev/gotham-433513/phone-spam-api-repo/phone-spam-api-service-prod:12102024-94b05a2d7c
     healthcheck:
       test: curl -f http://localhost:3000/api/v1/healthcheck || exit 1
       interval: 10s
