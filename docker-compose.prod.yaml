@@ -52,8 +52,6 @@ services:
       start_period: 30s
     expose:
       - "5432"
-    ports:
-      - "5432:5432"
     networks:
       - phone-spam-network
 
