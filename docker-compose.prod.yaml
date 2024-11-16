@@ -2,7 +2,7 @@ version: '3.7'
 # name: phone-spam
 services:
   api-service:
-    image: us-central1-docker.pkg.dev/gotham-433513/gotham-433513-dev-venue-artifact-registry/gotham-433513-venue-api-service:v1.2.41
+    image: us-central1-docker.pkg.dev/gotham-433513/gotham-433513-dev-venue-artifact-registry/gotham-433513-venue-api-service:v1.2.42
     healthcheck:
       test: curl -f http://localhost:3000/api/v1/healthcheck || exit 1
       interval: 10s
